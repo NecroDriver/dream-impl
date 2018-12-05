@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta name="viewport" charset="UTF-8" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/zdialog.css">
+    <title>章节列表</title>
+</head>
+<style>
+    .container {
+        width: 100%;
+    }
+
+    .row-header {
+        text-align: center;
+        margin: 2% 0 1% 0;
+    }
+
+    .panel-title {
+        display: inline-block;
+    }
+
+    .novel-name {
+        display: inline-block;
+    }
+
+    .fuzzy-query {
+        width: 130px;
+        display: inline-block;
+        margin-left: 5%;
+        margin-bottom: -8px;
+    }
+
+    .fuzzy-query:hover {
+        cursor: pointer;
+    }
+</style>
+<body>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 col-lg-12 column">
+            <div>
+                <h3 class="novel-name">名称</h3>
+                <div class="fuzzy-query">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="章节名称" value=""/>
+                        <span class="input-group-addon" onclick="search()"><span
+                                class="glyphicon glyphicon-search"></span></span>
+                    </div>
+                </div>
+                <a class="btn btn-primary btn-sm pull-right" href="../main.html"
+                   style="margin-top: 16px;margin-bottom: 10px;">
+                    <span class="glyphicon glyphicon-home"></span> 主页
+                </a>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">章节列表</h4>
+                    <button class="btn btn-success btn-xs pull-right" id="orderType" onclick="changeOrder()">
+                        <span class="glyphicon glyphicon-sort"></span> 正序
+                    </button>
+                </div>
+                <div class="panel-body">
+                    <dl></dl>
+                </div>
+                <div class="panel-foot"></div>
+            </div>
+            <ul class="pagination">
+                <li id="pageFirst"><a href="#">&laquo;</a></li>
+                <li id="pagePrev"><a href="#"><</a></li>
+                <li id="pageNum" class="disabled"><a href="#">共<strong></strong>页</a></li>
+                <li id="pageNext"><a href="#">></a></li>
+                <li id="pageLast"><a href="#">&raquo;</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- 模态框 -->
+<div class="modal fade" id="spiderModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true"
+     data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">初始化。。。</h5>
+            </div>
+            <div class="modal-body">
+                <!-- 进度条 -->
+                <div class="progress progress-striped active">
+                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60"
+                         aria-valuemin="0" aria-valuemax="100" style="width:0%;" id="novelProgress">
+                        <span class="sr-only"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/zdialog.js"></script>
+<script>
+    var novelCode = getUrlValue("novelCode");
+    var dispOrder = getUrlValue("dispOrder");
+    var pageSize = 30;
+    var pageNo = 1;
+    var orderType = 0;
+    var keywords = $(".fuzzy-query").find("input").val();
+
+    $(function () {
+
+        if (dispOrder != null) {
+            pageNo = Math.ceil(parseInt(dispOrder) / pageSize);
+            orderType = 1;
+            $("#orderType").html('<span class="glyphicon glyphicon-sort"></span> 倒序');
+        }
+
+        // 初始化
+        getNovel(novelCode);
+        getNovelChapterPage(pageNo, pageSize, orderType, keywords);
+
+        // 监听上下页
+        $("#pageFirst").click(function () {
+            keywords = $(".fuzzy-query").find("input").val();
+            getNovelChapterPage(pageNo, pageSize, orderType, keywords);
+        });
+        $("#pageLast").click(function () {
+            pageNo = $("#pageNum").find("strong").text();
+            keywords = $(".fuzzy-query").find("input").val();
+            getNovelChapterPage(pageNo, pageSize, orderType, keywords);
+        });
+        $("#pagePrev").click(function () {
+            pageNo = parseInt($(".pageNo.active").find("a").text());
+            pageNo = pageNo > 1 ? pageNo - 1 : pageNo;
+            keywords = $(".fuzzy-query").find("input").val();
+            getNovelChapterPage(pageNo, pageSize, orderType, keywords);
+        });
+        $("#pageNext").click(function () {
+            pageNo = parseInt($(".pageNo.active").find("a").text());
+            var pageNum = $("#pageNum").find("strong").text();
+            pageNo = pageNo < pageNum ? pageNo + 1 : pageNum;
+            keywords = $(".fuzzy-query").find("input").val();
+            getNovelChapterPage(pageNo, pageSize, orderType, keywords);
+        });
+    });
+
+    function getNovel(novelCode) {
+        $.ajax({
+            url: "/api/novel/" + novelCode,
+            type: "post",
+            data: {},
+            dataType: "json",
+            success: function (data) {
+                if (data.result) {
+                    var content = data.data;
+                    $("h3").text(content.novelName);
+                } else {
+                    alertMessage(data.message);
+                }
+            }
+        })
+    }
+
+    function getNovelChapterPage(pageNo, pageSize, orderType, keywords) {
+        $.ajax({
+            url: "/api/novel/" + novelCode + "/getNovelChapterPage",
+            type: "post",
+            dataType: "json",
+            data: {
+                pageNo: pageNo,
+                pageSize: pageSize,
+                orderType: orderType,
+                keywords: keywords
+            },
+            success: function (data) {
+                if (data.result) {
+                    var page = data.data;
+                    var contentHtml = "";
+                    if (page.content.length > 0) {
+                        page.content.forEach(function (value) {
+                            contentHtml += '<dd><a href=' + value.id + '"detail.html?id=">' + value.chapterName + '</a></dd>';
+                        });
+                        setPagination(pageNo, page.totalPages, 1);
+                    } else {
+                        contentHtml += '<dd>尚未抓取书籍！<a class="btn btn-primary btn-xs" onclick="spiderNovelChapter()">开始抓取</a></dd>'
+                    }
+                    $(".panel-body dl").html("");
+                    $(".panel-body dl").append(contentHtml);
+                } else {
+                    alertMessage(data.message);
+                }
+            },
+            error: function (XMLHttpRequest) {
+                console.log(XMLHttpRequest);
+                location.href = "../login.html";
+            }
+        })
+    }
+
+    function setPagination(pageNo, pageNum, pageSpace) {
+        $(".pageNo").remove();
+        if (pageNo <= pageSpace) {
+            $("#pagePrev").after(getPaginationHtml(1, pageSpace * 2 + 1));
+        } else if (pageNo + pageSpace >= pageNum) {
+            $("#pagePrev").after(getPaginationHtml(pageNum - pageSpace * 2, pageNum));
+        } else {
+            $("#pagePrev").after(getPaginationHtml(pageNo - pageSpace, pageNo + pageSpace));
+        }
+        $("#pageNum").find("strong").text(pageNum);
+        $("#pageNo" + pageNo).addClass("active");
+    }
+
+    function getPaginationHtml(pageBegin, pageEnd) {
+        var paginationContent = "";
+        for (var i = pageBegin; i <= pageEnd; i++) {
+            paginationContent += '<li class="pageNo" id="pageNo' + i + '"><a href="#" onclick="getPage(' + i + ')">' + i + '</a></li>';
+        }
+        return paginationContent;
+    }
+
+    // 分页响应
+    function getPage(pageNo) {
+        getNovelChapterPage(pageNo, pageSize, orderType, keywords);
+    }
+
+    // 切换排序方式
+    function changeOrder() {
+        orderType = orderType ^ 1;
+        $("#orderType").html('<span class="glyphicon glyphicon-sort"></span> ' + (orderType == 0 ? '正序' : '倒序'));
+        pageNo = $(".pageNo.active").find("a").text();
+        getNovelChapterPage(pageNo, pageSize, orderType, keywords);
+    }
+
+    // 模糊查询章节
+    function search() {
+        var keywords = $(".fuzzy-query").find("input").val();
+        getNovelChapterPage(pageNo, pageSize, orderType, keywords);
+    }
+
+    function spiderNovelChapter() {
+        // 打开模态框
+        $("#spiderModal").modal("show");
+
+        // 建立webSocket
+        var webSocket = null;
+        var token = getCookieValue("USER_TOKEN");
+        // 判断当前浏览器是否支持WebSocket
+        if ("WebSocket" in window) {
+            webSocket = new WebSocket("ws:localhost:8080/tokenWebSocket?token=" + token);
+        } else {
+            alertMessage('当前浏览器不支持WebSocket');
+        }
+
+        // 连接成功建立的回调方法
+        webSocket.onopen = function () {
+            $("#modalTitle").text("数据抓取中。。。");
+        }
+        //连接关闭的回调方法
+        webSocket.onclose = function () {
+            $("#modalTitle").text("数据抓取中断。。。");
+        }
+        // 连接发生错误的回调方法
+        webSocket.onerror = function () {
+            $("#modalTitle").text("数据抓取异常。。。");
+        }
+        // 接收到消息的回调方法
+        webSocket.onmessage = function (event) {
+            if (event.data === "100") {
+                $("#modalTitle").text("数据抓取完成" + event.data + "%，等待载入。。。");
+            } else {
+                $("#modalTitle").text("数据抓取中。。。" + event.data + "%");
+            }
+            $("#novelProgress").css("width", event.data + "%");
+        }
+
+        // 监听窗口关闭事件，当窗口关闭时，主动去关闭webSocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+        window.onbeforeunload = function () {
+            webSocket.close();
+        }
+        // 开始请求
+        $.ajax({
+            url: "/api/novel/spider/list/" + novelCode,
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                if (data.result) {
+                    $("#spiderModal").modal("hide");
+                    autoFadeMessage("数据抓取成功！");
+                    setTimeout(window.location.reload(), 500);
+                } else {
+                    alertMessage(data.message);
+                }
+            }
+        });
+    }
+</script>
+</html>

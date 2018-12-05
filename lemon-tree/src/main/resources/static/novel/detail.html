@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta name="viewport" charset="UTF-8" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <title>章节内容</title>
+</head>
+<style>
+    .container {
+        width: 98%;
+    }
+
+    .row-header {
+        text-align: center;
+        margin: 2% 0 1% 0;
+    }
+
+    body {
+        background-color: #90af83;
+        font-size: 16px;
+        line-height: 1.8;
+    }
+</style>
+<body>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="page-header">
+                <h4 id="title"></h4>
+            </div>
+            <p id="content"></p>
+            <hr>
+        </div>
+        <ul class="pager">
+            <li class="chapter" id="prev"><a href="#">
+                <span class="glyphicon glyphicon-arrow-left"></span> 上一章</a>
+            </li>
+            <li class="chapterMenu"><a href="#"><span class="glyphicon glyphicon-list"></span> 目录</a></li>
+            <li class="chapter" id="next"><a href="#">
+                下一章 <span class="glyphicon glyphicon-arrow-right"></span></a>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="../js/common.js"></script>
+<script>
+    var id = getUrlValue("id");
+    $(function () {
+
+        getNovelChapter();
+        $(".chapter").click(function () {
+            if ($(this).hasClass("disabled")) {
+
+            } else {
+                id = $(this).attr("chapterId");
+                console.log(id);
+                getNovelChapter();
+            }
+        });
+
+    })
+
+    $(document).bind("keydown", function (event) {
+        if (event.which === 37) {
+            $("#prev").find("a").click();
+        }
+        if (event.which === 39) {
+            $("#next").find("a").click();
+        }
+    })
+
+    function getNovelChapter() {
+        $.ajax({
+            url: "/api/novel/chapter/" + id,
+            type: "post",
+            data: {},
+            dataType: "json",
+            success: function (data) {
+                var content = data.data;
+                $("#title").text(content.chapterName);
+                $("#content").text(content.content);
+                if (content.prevId == null) {
+                    $("#prev").addClass("disabled");
+                } else {
+                    $("#prev").removeClass("disabled");
+                    $("#prev").attr("chapterId", content.prevId);
+                }
+                if (content.nextId == null) {
+                    $("#next").addClass("disabled");
+                } else {
+                    $("#next").removeClass("disabled");
+                    $("#next").attr("chapterId", content.nextId);
+                }
+                $(".chapterMenu").find("a").attr("href", "list.html?novelCode=" + content.novelCode + "&dispOrder=" + content.dispOrder);
+            },
+            error: function (XMLHttpRequest) {
+                console.log(XMLHttpRequest);
+                location.href = "../login.html";
+            }
+        })
+    }
+</script>
+</html>

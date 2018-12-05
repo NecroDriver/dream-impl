@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta name="viewport" charset="UTF-8" content="width=device-width,initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/zdialog.css"/>
+    <title>主页</title>
+    <style>
+        body {
+            padding: 50px 0 0 0;
+        }
+
+        .container {
+            padding: 0;
+            width: 98%;
+        }
+
+        .row-header {
+            text-align: center;
+            margin: 2% 0 1% 0;
+        }
+
+        .row-footer {
+            margin: -1% 0 0.5% 0;
+            text-align: center;
+        }
+
+        #novel .thumbnail:hover {
+            cursor: pointer;
+        }
+
+        #novel .thumbnail img {
+            width: 190px;
+            height: 250px;
+        }
+
+        #novel .thumbnail .caption {
+            height: 205px;
+            overflow: hidden;
+        }
+
+        .pager {
+            display: inline-block;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body data-spy="scroll" data-target="">
+<div class="container">
+
+    <!-- 导航栏 -->
+    <div class="row clearfix">
+        <div class="col-md-12 col-lg-12 column">
+            <nav class="navbar navbar-default navbar-inverse navbar-fixed-top" id="my-navbar" role="navigation">
+                <div class="navbar-header">
+                    <!-- 用于小屏幕时折叠元素 -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                            data-target="#my-navbar-collapse">
+                        <!-- 屏幕阅读器 screen read only -->
+                        <span class="sr-only">Toggle navigation</span>
+                        <!-- 三条横杠 -->
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">我的主页</a>
+                </div>
+                <div class="collapse navbar-collapse" id="my-navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#picture"><span class="glyphicon glyphicon-picture"></span> picture</a>
+                        </li>
+                        <li><a href="#novel"><span class="glyphicon glyphicon-book"></span> novel</a></li>
+                        <li><a href="#note"><span class="glyphicon glyphicon-pencil"></span> note</a></li>
+                        <!-- 下拉导航元素 -->
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" href="#" data-toggle="dropdown"><span
+                                    class="glyphicon glyphicon-plus"></span> more<strong class="caret"></strong></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">1</a></li>
+                                <li><a href="#">1</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right" style="margin-right: 0">
+                        <li><a href="#" data-toggle="modal" data-target="#loginOutModal"><span
+                                class="glyphicon glyphicon-log-out"></span> 登出</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- 轮播图 -->
+    <div class="row clearfix" id="picture" style="background-color:#ebe9e6">
+        <div class="col-md-12 col-lg-12 row-header">
+            <h3><span class="glyphicon glyphicon-picture"></span> picture</h3>
+        </div>
+        <div class="col-md-12 col-lg-12 column">
+            <div class="carousel slide" id="my-carousel">
+                <!-- 轮播指标 -->
+                <ol class="carousel-indicators">
+                    <li data-slide-to="0" data-target="#my-carousel" class="active"></li>
+                    <li data-slide-to="1" data-target="#my-carousel"></li>
+                    <li data-slide-to="2" data-target="#my-carousel"></li>
+                </ol>
+                <!-- 轮播内容 -->
+                <div class="carousel-inner">
+                    <div class="item active">
+                        <img src="images/cat1.jpg" alt=""/>
+                        <div class="carousel-caption">
+                            <h4>标题</h4>
+                            <p>介绍</p>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img src="images/cat2.jpg" alt=""/>
+                        <div class="carousel-caption">
+                            <h4>标题</h4>
+                            <p>介绍</p>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img src="images/cat3.jpg" alt=""/>
+                        <div class="carousel-caption">
+                            <h4>标题</h4>
+                            <p>介绍</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- 轮播功能 -->
+                <a class="left carousel-control" href="#my-carousel" data-slide="prev"><span
+                        class="glyphicon glyphicon-chevron-left"></span></a>
+                <a class="right carousel-control" href="#my-carousel" data-slide="next"><span
+                        class="glyphicon glyphicon-chevron-right"></span></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 缩略图 -->
+    <div class="row clearfix" id="novel" style="background-color:#eae3df">
+        <div class="col-md-12 col-lg-12 row-header">
+            <h3>
+                <span class="glyphicon glyphicon-book"></span> novel
+                <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#novelModal"
+                        style="margin-left: -5%;">
+                    <span class="glyphicon glyphicon-plus"></span> 添加书籍
+                </button>
+            </h3>
+        </div>
+        <div class="col-md-3 col-lg-3">
+            <div class="thumbnail">
+                <img src="images/page1_img1.jpg" alt="images/page1_img1"/>
+                <div class="caption">
+                    <h3>标题</h3>
+                    <p>简介</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-lg-3">
+            <div class="thumbnail">
+                <img src="images/page1_img2.jpg" alt="images/page1_img2"/>
+                <div class="caption">
+                    <h3>标题</h3>
+                    <p>简介</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-lg-3">
+            <div class="thumbnail">
+                <img src="images/page1_img3.jpg" alt="images/page1_img3"/>
+                <div class="caption">
+                    <h3>标题</h3>
+                    <p>简介</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-lg-3">
+            <div class="thumbnail">
+                <img src="images/page1_img4.jpg" alt="images/page1_img4.jpg"/>
+                <div class="caption">
+                    <h3>标题</h3>
+                    <p>简介</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-12 row-footer">
+            <ul class="pager">
+                <li class="novel-pager" id="prevNovels" style="margin-right: 30px;"><a
+                        href="javascript:void(0);">上一页</a></li>
+                <li class="novel-pager" id="nextNovels" style="margin-left: 30px;"><a href="javascript:void(0);">下一页</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row clearfix" id="note" style="background-color: #ebe9e6">
+        <div class="col-md-12 col-lg-12 row-header">
+            <h3>
+                <span class="glyphicon glyphicon-pencil"></span> note
+            </h3>
+        </div>
+        <div class="col-md-12 col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title" style="display:inline-block">笔记列表</h4>
+                    <a href="note/add.html" class="btn btn-info btn-xs pull-right" target="_self">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                </div>
+                <ul class="list-group" id="notePage"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 模态框（modal） -->
+<div class="modal fade" id="loginOutModal" tabindex="-1" role="dialog" aria-labelledby="loginOutModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="loginOutModalLabel">信息</h4>
+            </div>
+            <div class="modal-body">
+                确认退出？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="loginOut()">退出</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 模态框（modal） -->
+<div class="modal fade" id="novelModal" tabindex="-1" role="dialog" aria-labelledby="novelModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="novelModalLabel">添加书籍</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="novelName" class="col-md-2 control-label">小说名称</label>
+                        <div class="col-md-10"><input type="text" class="form-control" id="novelName"/></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="novelCode" class="col-md-2 control-label">小说编号</label>
+                        <div class="col-md-10"><input type="text" class="form-control" id="novelCode"/></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="url" class="col-md-2 control-label">小说地址</label>
+                        <div class="col-md-10"><input type="text" class="form-control" id="url"/></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="coverImg" class="col-md-2 control-label">封面地址</label>
+                        <div class="col-md-10"><input type="text" class="form-control" id="coverImg"/></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="flagEnd" class="col-md-2 control-label">是否完结</label>
+                        <div class="col-md-10" id="flagEnd">
+                            <input type="radio" name="flagEnd" value="1" checked="checked"/> 是
+                            <input type="radio" name="flagEnd" value="0"/> 否
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="description" class="col-md-2 control-label">小说简介</label>
+                        <div class="col-md-10">
+                            <textarea class="form-control" id="description" rows="3"></textarea>
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="addNovel()">确认</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="js/zdialog.js"></script>
+<script>
+    var novelPageNo = 1;
+    var novelPageSize = 4;
+    var orderType = 0;
+
+    var notePageNo = 1;
+    var notePageSize = 10;
+
+    $(function () {
+        // 获取小说分页
+        getNovelPage();
+        // 获取笔记分页
+        getNotePage();
+
+        // 设置缩略图点击事件
+        $("#novel .thumbnail").click(function () {
+            window.open("novel/list.html?novelCode=" + $(this).find("img").attr("alt"));
+        });
+
+        // 设置分页点击事件
+        $(".novel-pager").click(function () {
+            if (!$(this).hasClass("disabled")) {
+                novelPageNo = parseInt($(this).attr("novelPageNo"));
+                if (novelPageNo) {
+                    getNovelPage();
+                }
+            }
+        });
+    });
+
+    function getNovelPage() {
+        $.ajax({
+            url: "/api/novel/getNovelPage",
+            type: "post",
+            dataType: "json",
+            data: {
+                pageNo: novelPageNo,
+                pageSize: novelPageSize,
+                orderType: orderType
+            },
+            success: function (data) {
+                var page = data.data;
+                var content = page.content;
+                $("#novel .thumbnail").each(function (index) {
+                    if (content[index]) {
+                        $(this).find("img").attr("src", content[index].coverImg);
+                        $(this).find("img").attr("alt", content[index].novelCode);
+                        $(this).find("h3").text(content[index].novelName);
+                        $(this).find("p").text(content[index].description);
+                    }
+                });
+                // 上下页初始化
+                $("#prevNovels").removeClass("disabled");
+                $("#nextNovels").removeClass("disabled");
+                if (novelPageNo - 1 > 0) {
+                    $("#prevNovels").attr("novelPageNo", novelPageNo - 1);
+                } else {
+                    $("#prevNovels").addClass("disabled");
+                }
+                if (novelPageNo + 1 <= page.totalPages) {
+                    $("#nextNovels").attr("novelPageNo", novelPageNo + 1);
+                } else {
+                    $("#nextNovels").addClass("disabled");
+                }
+            },
+            error: function (XMLHttpRequest) {
+                console.log(XMLHttpRequest);
+                window.location.href = "/login.html";
+            }
+        });
+    }
+
+    function loginOut() {
+        $.ajax({
+            url: "/api/user/loginOut",
+            type: "post",
+            data: {},
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+                window.location.href = "/login.html";
+            },
+            error: function (XMLHttpRequest) {
+                console.log(XMLHttpRequest);
+            }
+        })
+    }
+
+    function addNovel() {
+        var novelName = $("#novelName").val();
+        var novelCode = $("#novelCode").val();
+        var url = $("#url").val();
+        var coverImg = $("#coverImg").val();
+        var flagEnd = $("input[name='flagEnd']:checked").val();
+        var description = $("#description").val();
+        $.ajax({
+            url: "/api/novel/add",
+            type: "post",
+            dataType: "json",
+            data: {
+                novelName: novelName,
+                novelCode: novelCode,
+                url: url,
+                coverImg: coverImg,
+                flagEnd: flagEnd,
+                description: description
+            },
+            success: function (data) {
+                if (data.result) {
+                    $("#novelModal").modal("hide");
+                    getNovelPage();
+                    autoFadeMessage("添加成功！");
+                } else {
+                    alertMessage(data.message);
+                }
+            }
+        });
+    }
+
+    function getNotePage() {
+        $.ajax({
+            url: "/api/note/getNotePage",
+            type: "post",
+            data: {
+                pageNo: notePageNo,
+                pageSize: notePageSize
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.result) {
+                    var page = data.data;
+                    var content = page.content;
+                    var html = '';
+                    for (var index in content) {
+                        console.log(content[index]);
+                        html += '<li class="list-group-item" id="note' + content[index].id + '"><a href=' + content[index].id + '"note/detail.html?id=" target="_blank">[' + content[index].createTime + '] ' + content[index].title + '</a><a class="btn btn-warning btn-xs pull-right" onclick="deleteNote(' + content[index].id + ')"><span class="glyphicon glyphicon-trash"></span></a><a class="btn btn-success btn-xs pull-right" href=' + content[index].id + '"note/edit.html?id=" style="margin-right:3px;"><span class="glyphicon glyphicon-edit"></span></a></li>';
+                    }
+                    $("#notePage li").remove();
+                    $("#notePage").append(html);
+                } else {
+                    alertMessage(data.message);
+                }
+            }
+        })
+    }
+
+    function deleteNote(id) {
+        confirmMessage("确认删除该笔记吗？", function () {
+            $.ajax({
+                url: "/api/note/deleteNote/" + id,
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    if (data.result) {
+                        closeMessage();
+                        autoFadeMessage("笔记删除成功！");
+                        $("#note" + id).remove();
+                    } else {
+                        alertMessage(data.message);
+                    }
+                }
+            })
+        });
+    }
+</script>
+</html>

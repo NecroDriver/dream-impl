@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Head -->
+<head>
+
+    <title>登录</title>
+
+    <!-- Meta-Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <!-- Style -->
+    <link rel="stylesheet" href="css/login_style.css" type="text/css" media="all">
+
+</head>
+<!-- //Head -->
+
+<!-- Body -->
+<body>
+
+<h1>HAVE A TRY</h1>
+
+<div class="container">
+
+    <div class="login">
+        <h2>登 录</h2>
+        <input type="text" name="account" placeholder="账户" required=""/>
+        <input type="password" name="password" placeholder="密码" required=""/>
+        <ul class="tick">
+            <li>
+                <input type="checkbox" id="brand"/>
+                <label for="brand" id="remember"><span></span>记住我</label>
+            </li>
+        </ul>
+        <div class="send-button">
+            <input type="button" onclick="login()" value="登 录"/>
+        </div>
+        <a href="#">记住密码?</a>
+        <div class="social-icons">
+            <p>- 其他方式登录 -</p>
+            <ul>
+                <li class="qq"><a href="#">
+                    <span class="icons"></span>
+                    <span class="text">QQ</span></a></li>
+                <li class="weixin w3ls"><a href="#">
+                    <span class="icons w3layouts"></span>
+                    <span class="text">微信</span></a></li>
+                <li class="weibo aits"><a href="#">
+                    <span class="icons agileits"></span>
+                    <span class="text">微博</span></a></li>
+            </ul>
+            <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="copyrights">Collect from <a href="http://www.cssmoban.com/">企业网站模板</a></div>
+    <div class="register">
+        <h2>注 册</h2>
+        <input type="text" name="account" placeholder="账户" required="">
+        <input type="text" name="userName" placeholder="用户名" required="">
+        <input type="text" name="email" placeholder="邮箱" required="">
+        <input type="password" name="password" placeholder="密码" required="">
+        <input type="text" name="phone" placeholder="手机号码" required="">
+        <div class="send-button">
+            <input type="button" onclick="register()" value="注册">
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <div class="clear"></div>
+
+</div>
+
+<div class="footer">
+    <p>Copyright &copy; More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> -
+        Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></p>
+</div>
+
+</body>
+<!-- //Body -->
+
+<script type="application/x-javascript"> addEventListener("load", function () {
+    setTimeout(hideURLbar, 0);
+}, false);
+
+function hideURLbar() {
+    window.scrollTo(0, 1);
+} </script>
+<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="js/common.js"></script>
+<script type="text/javascript">
+    // 用于标记是否记住用户名
+    var flagRemember = 0;
+
+    $(function () {
+        // 获取记住的用户名
+        var account = getCookieValue("account");
+        if (account) {
+            $(".login").find("input[name='account']").val(account);
+        }
+        $("#remember").click(function () {
+            flagRemember = flagRemember ^ 1;
+        })
+    });
+
+    function login() {
+        var account = $(".login").find("input[name='account']").val();
+        var password = $(".login").find("input[name='password']").val();
+        $.ajax({
+            url: "/api/user/login",
+            type: "post",
+            dataType: "json",
+            data: {
+                account: account,
+                password: password
+            },
+            success: function (data) {
+                if (data.result) {
+                    // 判断是否记住账户
+                    if (flagRemember == 1) {
+                        setCookie("account", account, 7 * 24 * 60 * 60);
+                    }
+                    window.location.href = "main.html";
+                } else {
+                    alert(data.message);
+                }
+            }
+        });
+    }
+
+    function register() {
+        var account = $(".register").find("input[name='account']");
+        var userName = $(".register").find("input[name='userName']");
+        var password = $(".register").find("input[name='password']");
+        var email = $(".register").find("input[name='email']");
+        var phone = $(".register").find("input[name='phone']");
+        $.ajax({
+            url: "/api/user/register",
+            type: "post",
+            dataType: "json",
+            data: {
+                account: account.val(),
+                userName: userName.val(),
+                password: password.val(),
+                email: email.val(),
+                phone: phone.val()
+            },
+            success: function (data) {
+                if (data.result) {
+                    alert("注册成功，请登录！");
+                    $(".login").find("input[name='account']").val(account.val());
+                    account.val("");
+                    userName.val("");
+                    password.val("");
+                    email.val("");
+                    phone.val("");
+                } else {
+                    alert(data.message);
+                }
+            }
+        });
+    }
+</script>
+</html>

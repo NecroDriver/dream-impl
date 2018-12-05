@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta name="viewport" charset="UTF-8" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/zdialog.css">
+    <title>修改笔记</title>
+    <style type="text/css">
+        body {
+            background: url("../images/background_note_add.jpg");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            -webkit-background-size: cover;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .maxim {
+            text-indent: 2em;
+            color: #777;
+        }
+
+        #label {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row clear-fix">
+        <div class="col-md-12 col-lg-12">
+            <form role="form">
+                <div class="form-group maxim">
+                    <span class="form-control-static"><em>群处守口，独处守心。</em></span>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="title" placeholder="请输入标题">
+                </div>
+                <div class="form-group" id="editor"></div>
+                <div class="form-group">
+                    <select class="form-control pull-left" id="label"></select>
+                    <button type="button" class="btn btn-primary pull-right" onclick="editNote()">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="//unpkg.com/wangeditor/release/wangEditor.min.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/zdialog.js"></script>
+<script>
+    var id = getUrlValue("id");
+    var E = window.wangEditor;
+    var editor = new E("#editor");
+    editor.create();
+
+    $(function () {
+        // 富文本编辑器样式修改
+        $(".w-e-toolbar").css("border", "1px solid #f1f1f1");
+        $(".w-e-text-container").css("border", "1px solid #f1f1f1");
+        // 获取标签列表
+        getLabelList();
+        // 获取笔记信息
+        getNoteInfo();
+
+    })
+
+    function getLabelList() {
+        $.ajax({
+            url: "/api/note/getLabelList",
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                if (data.result === true) {
+                    var labelArr = data.data;
+                    var html = '';
+                    for (var i in labelArr) {
+                        var label = labelArr[i];
+                        html += '<option value="' + label.id + '">' + label.labelName + '</option>';
+                    }
+                    $("#label").append(html);
+                } else {
+                    alertMessage(data.meeeage);
+                }
+            }
+        })
+    }
+
+    function getNoteInfo() {
+        $.ajax({
+            url: "/api/note/getNoteInfo/" + id,
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                if (data.result) {
+                    var content = data.data;
+                    $("#title").val(content.title);
+                    editor.txt.html(content.content);
+                    $("#label option[value=" + content.labelId + "]").attr("selected", "selected");
+                } else {
+                    alertMessage(data.message);
+                }
+            }
+        });
+    }
+
+    function editNote() {
+        var title = $("#title").val();
+        var content = editor.txt.html();
+        var labelId = $("#label").val();
+        $.ajax({
+            url: "/api/note/editNoteInfo",
+            type: "post",
+            data: {
+                id: id,
+                title: title,
+                content: content,
+                labelId: labelId
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.result) {
+                    autoFadeMessage("修改成功！");
+                    window.location.href = "../main.html#note";
+                } else {
+                    alertMessage(data.message);
+                }
+            }
+        })
+    }
+</script>
+</html>
